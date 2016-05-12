@@ -34,39 +34,45 @@ namespace KakuroHelper
             InitializeComponent();
             for (int i = 1; i < 10; ++i)
             {
-                lstbMust.Items.Add(i);
-                lstbMustNot.Items.Add(i);
+                lstbMust1.Items.Add(i);
+                lstbMust2.Items.Add(i);
+                lstbMust3.Items.Add(i);
             }
             //KakuroSolver solver = new KakuroSolver();
             //solver.Show();
         }
 
         private void btClear_Click(object sender, EventArgs e) {
-            lstbMust.SelectedItems.Clear();
-            lstbMustNot.SelectedItems.Clear();
-            recalculateCombinations();
+            lstbMust1.SelectedItems.Clear();
+            recalculateCombinations(1);
         }
 
         private void tbNumber_TextChanged(object sender, EventArgs e) {
-            recalculateCombinations();
+            recalculateCombinations(1);
         }
 
         private void tbLength_TextChanged(object sender, EventArgs e) {
-            recalculateCombinations();
-        }
-
-        private void lstbMustNot_SelectedValueChanged(object sender, EventArgs e) {
-            recalculateCombinations();
+            recalculateCombinations(1);
         }
 
         private void lstbMust_SelectedValueChanged(object sender, EventArgs e) {
-            recalculateCombinations();
+            recalculateCombinations(1);
         }
 
-        private bool checkIfRecalculationIsPossible() {
+        private bool checkIfRecalculationIsPossible(int group) {
             try {
-                currentNumber = Convert.ToInt32(tbNumber.Text);
-                currentLength = Convert.ToInt32(tbLength.Text);
+                if (group == 1) { 
+                    currentNumber[0] = Convert.ToInt32(tbNumber1.Text);
+                    currentLength[0] = Convert.ToInt32(tbLength1.Text);
+                }
+                else if (group == 2) {
+                    currentNumber[1] = Convert.ToInt32(tbNumber2.Text);
+                    currentLength[1] = Convert.ToInt32(tbLength2.Text);
+                }
+                else if (group == 3) {
+                    currentNumber[2] = Convert.ToInt32(tbNumber3.Text);
+                    currentLength[2] = Convert.ToInt32(tbLength3.Text);
+                }
             }
             catch (Exception) {
                 return false;
@@ -75,31 +81,91 @@ namespace KakuroHelper
             return true;
         }
 
-        private void recalculateCombinations() {
-            if (checkIfRecalculationIsPossible() == true) {
+        private void recalculateCombinations(int group) {
+            if (checkIfRecalculationIsPossible(group) == true) {
                 List<int> exclude = new List<int>();
                 List<int> must = new List<int>();
-                foreach (int i in lstbMust.SelectedItems) {
-                    must.Add(i);
+                if (group == 1) { 
+                    foreach (int i in lstbMust1.SelectedItems) {
+                        must.Add(i);
+                    }
+                    //foreach (int i in lstbMustNot.SelectedItems) {
+                    //    exclude.Add(i);
+                    //}
                 }
-                foreach (int i in lstbMustNot.SelectedItems) {
-                    exclude.Add(i);
+                else if (group == 2) {
+                    foreach (int i in lstbMust2.SelectedItems) {
+                        must.Add(i);
+                    }
+                }
+                else if (group == 3) {
+                    foreach (int i in lstbMust3.SelectedItems) {
+                        must.Add(i);
+                    }
                 }
 
-                List<List<int>> result = helper.getPossibleCombinationsForSum(currentNumber, currentLength, exclude, must);
+                List<List<int>> result = helper.getPossibleCombinationsForSum(currentNumber[group - 1], currentLength[group - 1], exclude, must);
 
-                lstbResult.Items.Clear();
+                if(group == 1) lstbResult1.Items.Clear();
+                else if (group == 2) lstbResult2.Items.Clear();
+                else if (group == 3) lstbResult3.Items.Clear();
+
                 foreach (List<int> currentList in result) {
                     string s = "[ ";
                     foreach (int i in currentList) { s += i.ToString() + " "; }
                     s += "]";
-                    lstbResult.Items.Add(s);
+                    if (group == 1) lstbResult1.Items.Add(s);
+                    else if (group == 2) lstbResult2.Items.Add(s);
+                    else if (group == 3) lstbResult3.Items.Add(s);
                 }
             }
         }
+
+        private void menuLvl1About_Click(object sender, EventArgs e) {
+            Form form = new AboutBox();
+            form.ShowDialog();
+        }
+
+        private void menuLvl1Exit_Click(object sender, EventArgs e) {
+            Application.Exit();
+        }
         
         private KakuroBase helper;
-        private int currentNumber = 0;
-        private int currentLength = 0;
+        private int[] currentNumber = {0,0,0};
+        private int[] currentLength = {0,0,0};
+
+        private void tbNumber2_TextChanged(object sender, EventArgs e) {
+            recalculateCombinations(2);
+        }
+
+        private void tbLength2_TextChanged(object sender, EventArgs e) {
+            recalculateCombinations(2);
+        }
+
+        private void tbNumber3_TextChanged(object sender, EventArgs e) {
+            recalculateCombinations(3);
+        }
+
+        private void tbLength3_TextChanged(object sender, EventArgs e) {
+            recalculateCombinations(3);
+        }
+
+        private void btClear2_Click(object sender, EventArgs e) {
+            lstbMust2.SelectedItems.Clear();
+            recalculateCombinations(2);
+        }
+
+        private void btClear3_Click(object sender, EventArgs e) {
+            lstbMust3.SelectedItems.Clear();
+            recalculateCombinations(3);
+        }
+
+        private void lstbMust2_SelectedValueChanged(object sender, EventArgs e) {
+            recalculateCombinations(2);
+        }
+
+        private void lstbMust3_SelectedValueChanged(object sender, EventArgs e) {
+            recalculateCombinations(3);
+        }
     }
 }
